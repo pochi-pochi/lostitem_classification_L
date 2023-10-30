@@ -1,0 +1,4 @@
+{
+    "root_directory": "./dataset/train",
+    "folders": ['cash', 'Bags', 'Bags_envelopes', 'Wallets', 'card_cases', 'Cameras', 'watches', 'Glasses', 'Electrical_products', 'Mobile_phones', 'precious_metals', 'Hobbies_and_entertainment_supplies', 'Certification_documents_cards', 'Securities', 'Works', 'Notebook_stationery', 'Documents_papers', 'Parcels_Boxes', 'Clothing_footwear', 'Umbrellas', 'keys', 'Daily_necessities', 'Medical_Cosmetics', 'Food_items', 'flora_and_fauna', 'others']
+}
