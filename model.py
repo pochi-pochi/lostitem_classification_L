@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 from tqdm import tqdm
 import torch
+from PIL import Image
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(f"Using {device} device")
@@ -98,5 +99,39 @@ def train_model(net, data_loaders_dist, criterion, optimizer, num_epochs):
 
 
 # 学習の実行
-num_epochs = 10
+num_epochs = 1
 train_model(net, dataloaders_dict, criterion, optimizer, num_epochs=num_epochs)
+
+
+# 画像の前処理関数
+def preprocess_image(image_path):
+    image_transform = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])
+    ])
+    image = Image.open(image_path)
+    image = image_transform(image).unsqueeze(0)  # バッチ次元の追加
+    return image.to(device)
+
+
+# 推論関数
+def predict_image(model, image_path):
+    model.eval()  # モデルを評価モードに設定
+    image = preprocess_image(image_path)
+    with torch.no_grad():  # 勾配計算を無効化
+        outputs = model(image)
+        _, preds = torch.max(outputs, 1)
+    return preds.item()
+
+
+# クラス名の取得
+idx_to_class = {v: k for k, v in dataset.class_to_idx.items()}
+
+# 推論の実行
+image_path = './test_img/shiba.jpg'
+pred_class_idx = predict_image(net, image_path)
+pred_class_name = idx_to_class[pred_class_idx]
+print(f'Predicted class index: {pred_class_idx}, name: {pred_class_name}')
